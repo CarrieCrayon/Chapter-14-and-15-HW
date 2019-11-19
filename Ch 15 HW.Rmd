@@ -1,0 +1,70 @@
+---
+title: "Ch 15 HW"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(forcats)
+```
+
+
+##15.3 Exercises
+
+###Exercise 1:
+Explore distribution of rincome
+```{r}
+ggplot(gss_cat, aes(rincome)) +
+  geom_bar() +
+  scale_x_discrete(drop = FALSE)
+```
+I'm guess the x coordinate labels are really long, thus they overlap? We can fix it by changing the direction of the labels!
+
+###Exercise 2:
+Most common relig? Most common partyid?
+```{r}
+gss_cat %>%
+  count(relig)
+```
+Protestant is the most common relig
+```{r}
+gss_cat %>%
+  count(partyid)
+```
+Independent is the most common partyid
+
+###Exercise 3:
+What does relig and denom refer to?
+```{r}
+View(gss_cat)
+
+gss_cat %>%
+  filter(relig=="Protestant")%>%
+  count(denom)%>%
+  arrange(desc(n))
+```
+Relig refers type of religion, and denom refers to denomination of (if) Protestant
+
+##15.4 Exercises
+
+###Exercise 1:
+High numbers in tvhours
+```{r}
+gss_cat%>%
+  arrange(desc(tvhours))
+
+ggplot(gss_cat, aes(tvhours)) +
+  geom_bar() +
+  scale_x_discrete(drop = FALSE)
+```
+I suppose the mean (which I'm guessing is around 3) would be a godd summary depending on what conclusion you want to find??
+
+###Exercise 2:
+I GIVE UP
+
+###Exercise 3:
+
+##15.5 Exercises
+
+###Exercise 1:
+
+###Exercise 2:

@@ -1,0 +1,378 @@
+---
+title: "Ch 14 HW"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(stringr)
+```
+
+##14.2 Exercises
+
+###Exercise 1: 
+"What's the difference between paste() and paste0()? What stringr function are they related to? How do they handle NA?"  
+```{r}
+?paste
+?paste0
+```
+
+###Exercise 2:
+"Describe the difference between the 'sep' and 'collapse' arguments to str_c()"
+```{r}
+?str_c()
+```
+
+###Exercise 3:
+"Use str_length() and str_sub() to extract middle character from string. What do you do if even number if letters?"
+```{r}
+v1<-"Cassandra"
+str_length(v1)
+str_sub(v1, 5, 5)
+
+v2<-"Carrie"
+str_length(v2)
+str_sub(v2, 3, 4)
+```
+
+###Exercise 4:
+"What does 'str_wrap()' do? When might you want to use it?"
+```{r}
+?str_wrap()
+```
+
+###Exercise 5:
+"What does 'str_trim()' do? What's the opposite of str_trim()?"
+```{r}
+?str_trim()
+```
+
+###Exercise 6:
+"Write a function that turns a vector c("a","b","c") into the string 'a, b, and c'"
+```{r}
+v<-c("a","b","c")
+
+v%>%
+  str_c(collapse=", ")
+```
+
+##14.3.1 Exercises
+
+###Exercise 1:
+"Explain why each of these strings don’t match a \: '\', '\\', '\\\'"  
+
+```
+Okay, this section was somewhat confusing BUT from what I can gather: "\" is seen as an escape symbol, "\\" gives you a blank space, and "\\\" I don't even know
+```
+
+###Exercise 2:
+"How would you match the sequence "'\ ?
+
+```{r}
+str_view("\"'\\", "\"'\\\\", match=TRUE)
+```
+When creating string with \ character, use \\. When matching, use \\\\????
+
+###Exercise 3: 
+What patterns will \..\..\.. match?
+
+```
+\. matched the "." character whereas . on its own matched to any charcter. Thus, \..\..\.. matches to ".charcter.character.character"
+```
+
+##14.3.2 Exercises
+
+###Exercise 1:
+"How do you match literal string $^$ ?"
+```{r}
+v<-"$^$"
+
+str_view(v, "\\$\\^\\$")
+```
+
+###Exercise 2:
+"Given 'stringr::words', find all words that..."
+```{r}
+#Start with y
+str_view(stringr::words, "^y", match=TRUE)
+```
+
+```{r}
+#End with x
+str_view(stringr::words, "x$", match=TRUE)
+```
+
+```{r}
+#Exactly 3 letters long
+str_view(stringr::words, "^...$", match=TRUE)
+```
+
+```{r}
+#7 letters or more
+str_view(stringr::words, ".......", match=TRUE)
+```
+
+##14.3.3 Exercises
+
+###Exercise 1:
+```{r}
+#Start with vowel
+str_view(stringr::words, "^[aeiou]", match=TRUE)
+```
+
+```{r}
+#Only contain consonants
+str_view(stringr::words, "^[^aeiou]+$", match=TRUE)
+```
+Note from 14.3.4 "+" is equivalent to 1 or more
+
+```{r}
+#End with ed but not eed
+str_view(stringr::words, "[^e]ed$", match=TRUE)
+```
+
+```{r}
+#End with ing or ise
+str_view(stringr::words, "ing$|ise$", match=TRUE)
+```
+
+###Exercise 2:
+"Expirically verify rule i before e exept after c"
+```{r}
+str_view(stringr::words, "cie", match=TRUE)
+str_view(stringr::words, "cei", match=TRUE)
+
+str_view(stringr::words, "[^c]ei", match=TRUE)
+str_view(stringr::words, "[^c]ie", match=TRUE)
+```
+Hmm...doesn't seem to be true?
+
+###Exercise 3:
+"Is q always followed by a u?"
+```{r}
+str_view(stringr::words, "q[^u]", match=TRUE)
+```
+Yup!
+
+###Exercise 4:
+"Expression that matches British English not American English"
+```{r}
+#???
+str_view(stringr::words, "ou", match=TRUE)
+```
+
+###Exercise 5:
+"Match telephone numbers as commonly written in your country"
+```{r}
+#Err...okay? I'll do my best?
+
+v1<-"916-867-9309"
+str_view(v1, "\\d{3}-\\d{3}-\\d{4}", match=TRUE)
+```
+I admit, I read ahead...
+
+##14.3.4 Exercises
+
+###Exercise 1:
+"Describe equivalents of ?, +, * in {m,n} form"
+
+```
+? is equiv {0,1} ... 0 or 1
++ is equiv to {1,} ... 1 or more
+* is equiv to {0,} ... 0 or more
+```
+###Exercise 2:
+"Describe what this regular expressions mean"
+
+```
+^.*$
+```
+Equiv to "contains any character 0 or more times" In other words, this expression matches everything.
+
+```
+"\\{.+\\}"
+```
+Equiv to any one character or more surrounded by curly brace
+
+```
+\d{4}-\d{2}-\d{2}, match=TRUE)
+```
+4 digits, hyphen, 2 digits, hyphen, 4 digits
+
+```
+"\\\\{4}"
+```
+I believe this will match to the string "\\{4}" (I tried recreating this string, but I couldn't figure it out! Those stupid backlashes are confusing)
+
+###Exercise 3:
+"Create regular expressions to find all words that..."
+```{r}
+#Start with three consonants
+str_view(stringr::words, "^[^aeiou]{3}", match=TRUE)
+
+#Have three or more vowels in a row
+str_view(stringr::words, "[aeiou]{3,}", match=TRUE)
+
+#Have two or more vowel-consonant pairs in a row 
+str_view(stringr::words, "([aeiou][^aeiou]){2,}", match=TRUE)
+```
+
+##14.4.1 Exercises
+
+###Exercise 1:
+```{r}
+#Start or end with x
+words[str_detect(stringr::words, "^x|x$")]
+
+#Start w/ vowel end with consonant
+words[str_detect(stringr::words, "^[aeiou].*[^aeiou]$")]
+
+#Word that contains at least one of every vowel??
+words[str_detect(stringr::words, "[aeiou]")]
+```
+
+###Exercise 2:
+```{r}
+#Word with highest number of vowels
+max(str_count(words, "[aeiou]"))
+
+words[str_count(words, "[aeiou]")==5]
+```
+
+
+##14.4.2 Exercises
+
+###Exercise 1:
+"red" matched to flickered...fix this!
+```{r}
+?str_view_all
+colours <- c("red", "orange", "yellow", "green", "blue", "purple")
+colour_match <- str_c(colours, collapse = "|")
+more <- sentences[str_count(sentences, colour_match) > 1]
+```
+Okay, so I trued the ^ and $ thing, but it did not work! After a quite google search, I obtained this???
+
+```{r}
+str_view_all(more, "\\b(red)\\b")
+```
+
+###Exercise 2:
+From Harvard sentence data extract...
+```{r}
+#First word from each sentence
+first_match
+
+#All words ending in -ing
+
+#All plurals
+```
+
+
+##14.4.3 Exercises
+
+###Exercise 1:
+Find all words that come after a number like "one"
+, "two", "three", etc. Pull out both number and word.
+```{r}
+number<-"(one|two|three|four|five|six|seven|eight|nine|ten) ([^ ]+)"
+
+has_num <- sentences %>%
+  str_subset(number) %>%
+  head(10)
+has_num %>% 
+  str_extract(number)
+```
+
+###Exercise 2:
+Find all contractions. Seperate before and after apostrophe
+```{r}
+#????????? ????????????
+str_view(sentences, "\'", match=TRUE)
+
+contract<-"..\'."
+
+has_con<- sentences %>%
+  str_subset(contract)
+has_con%>%
+  str_extract(contract)
+```
+
+##14.4.4 Exercises
+
+###Exercise 1:
+"Replace forward slashes in string with backslashes"
+```{r}
+v1<-"/ yo / i / hate / this"
+
+str_replace_all(v1, "/", "\\\\")
+```
+Okay! For some reason I can't back a single backslash. The notes say it should be "\\" but it never works!!!
+
+###Exercise 2:
+"Implement a simple version of str_to_lower() using replace_all()"
+```{r}
+v1<-"Hello There"
+str_replace_all(v1, c("H"="h", "T"="t"))
+```
+
+###Exercise 3:
+"Switch the first and last letter in words. Which are still words?"
+```{r}
+blah<-str_replace_all(words, "(^.)(.*)(.$)", "\\3\\2\\1")
+intersect(words, blah)
+```
+
+##14.4.5 Exercises
+
+###Exercise 1:
+Split a string like "apples, bananas, and pears" into individual components
+```{r}
+v1<-"apples, bananas, and pears"
+str_split(v1, boundary("word"))
+```
+
+###Exercise 2:
+Why is it better to split up boundary("word") than " "?
+```{r}
+#Well, if you look at the previous exercise, not all words a seperated by spaces: 
+
+str_split(v1, " ")
+```
+
+###Exercise 3:
+What does splitting with an empty string ("") do? Experiment, and then read the documentation.
+```{r}
+blah<-"la di dah, wah wah, HA!"
+
+str_split(blah, "")
+```
+Ahh, so it seems to split the string by every character in the string!
+
+##14.5 Exericses
+
+###Exercise 1:
+How would you find all strings containing \ with regex() vs. with fixed()?
+```{r}
+
+```
+
+###Exercise 2:
+What are the five most common words in setences?
+```{r}
+
+```
+
+##14.7 Exercises
+
+###Exercise 1:
+Find the stringi functions that:
+```{r}
+#Count the number of words
+
+#Find duplicate strings
+
+#Generate random text
+```
+
+###Exercise 3:
+How do you control the language that stri_sort() uses for sorting?
